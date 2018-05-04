@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
+	"os"
 	"strconv"
 )
 
@@ -14,12 +17,20 @@ type User struct {
 	Name   string `json:"name"`
 }
 
+func loadDotenv() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
+
 func getRoot(c *gin.Context) {
 	c.String(200, "OK %s well well done!", "Keisuke")
 }
 
 func main() {
-	session, err := mgo.Dial("172.17.0.2:27017")
+	loadDotenv()
+	session, err := mgo.Dial(os.Getenv("MONGO_HOST") + ":27017")
 	if err != nil {
 		panic(err)
 	}
